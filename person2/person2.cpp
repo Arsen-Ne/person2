@@ -12,12 +12,26 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	Person adam = Person::CreateAdam();
-	Person eva = Person::CreateEva();
-
-	Person noi = eva.GiveBirth("Noi", Sex::Male, &adam);
+	Person Adam = Person::CreateAdam();
+	Person Eva = Person::CreateEva();
+    cout << Adam.Print() << endl;
+    cout << Eva.Print() << endl;
 	
-	cout << adam.Print() << endl;
-	cout << eva.Print() << endl;
-	cout << noi.Print() << endl;
+    Person Noi = Eva.GiveBirth("Noi", Sex::Male, &Adam);
+    cout << Noi.Print() << endl; 
+
+    try {
+        Person Tu = Noi.GiveBirth("Era", Sex::Female);
+    }
+    catch (exception e) {
+        cout << e.what() << endl;
+    };
+	
+    try {
+        Person Tu = Eva.GiveBirth("Sara", Sex::Female, &Eva);
+    }
+    catch (exception e) {
+        cout << e.what();
+    };
+
 }

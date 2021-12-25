@@ -14,8 +14,11 @@ private:
 	Person* father;
 
 	Person(const char*, Sex);
+	Person(const char*, Sex, Person*);
+	Person(const char*, Sex, Person*, Person*);
 
-	void SetFather(Person*);
+	void Erase();
+	void Clone(const Person&);
 
 public:
 	static Person CreateAdam();
@@ -23,16 +26,14 @@ public:
 
 	Person(const Person&); // конструктор копирования
 
-	Person(const char*, Sex, Person*);
-	Person(const char*, Sex, Person*, Person*);
+	Person& operator =(const Person&); 
 
 	~Person(); // деструктор
 
 	void SetName(const char*);
 	const char* GetName() const;
 
-	Person GiveBirth(const char*, Sex);
-	Person GiveBirth(const char*, Sex, Person*);
+	Person GiveBirth(const char*, Sex, Person* = NULL);
 
 	string Print();
 

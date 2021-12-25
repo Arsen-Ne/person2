@@ -12,31 +12,39 @@ Person::Person(const char* aname, Sex asex) : ID(++next_ID), sex(asex) {
 	SetName(aname);
 }
 
-Person::Person(const Person& d) : ID(++next_ID) {
-	name = new char[strlen(d.name) + 1];
-	strcpy(name, d.name);
-	sex = d.sex;
-	mother = d.mother;
-	father = d.father;
-}
-
-Person::Person(const char* aname, Sex asex, Person* amother) : ID(++next_ID) {
-	SetName(aname);
-	sex = asex;
+Person::Person(const char* aname, Sex asex, Person* amother) : Person(aname, asex) {	
 	mother = amother;
 }
 
-Person::Person(const char* aname, Sex asex, Person* amother, Person* afather) : ID(++next_ID) {
-	SetName(aname);
-	sex = asex;
-	mother = amother;
+Person::Person(const char* aname, Sex asex, Person* amother, Person* afather) : Person(aname, asex, amother) {
 	father = afather;
 }
 
-Person::~Person() {
+void Person::Erase() {
 	delete[] name;
 }
+void Person::Clone(const Person& p) {
+	name = new char[strlen(p.name) + 1];
+	strcpy(name, p.name);
+	sex = p.sex;
+	mother = p.mother;
+	father = p.father;
+}
 
+Person:: ~Person() {
+	Erase();
+}
+
+Person::Person(const Person& p) : ID(++next_ID) {
+	Clone(p);
+}
+
+Person& Person::operator =(const Person& p) {
+	if (this != &p) {
+		Erase(); Clone(p);
+	}
+	return *this;
+}
 
 void Person::SetName(const char* aname) {
 	if (aname == NULL)
@@ -66,23 +74,14 @@ Person Person::CreateEva() {
 	return Person("Eva", Sex::Female);
 }
 
-Person Person::GiveBirth(const char* aname, Sex asex) {
-	if (this->sex == Sex::Male) {
-		throw exception("Cannot give birth. Invalid sex (MALE)");
-	}
-	return Person(aname, asex, this);
-}
 Person Person::GiveBirth(const char* aname, Sex asex, Person* afather) {
-	Person child = GiveBirth(aname, asex);
-	child.SetFather(afather);
-	return child;
-}
-
-void Person::SetFather(Person* afather) {
-	if (this->sex == Sex::Female) {
-		throw exception("Cannot assert father. Invalid sex (FEMALE)");
+	if (sex == Sex::Male) {
+		throw exception("This mother cannot give birth. Invalid sex (MALE)");
 	}
-	father = afather;
+	if (afather != NULL && afather->sex == Sex::Female) {
+		throw exception("Cannot give birth from this father. Invalid sex (FEMALE)");
+	}
+	return Person(aname, asex, this, afather);
 }
 
 string Person::Print() {	
